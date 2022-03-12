@@ -6,8 +6,13 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js"
-   },
-   "keywords": [],
-   "author": "",
-   "licence": "ISC"
+  },
+  "keywords": [],
+  "author": "",
+  "licence": "ISC",
+  "dependencies": {
+    "ejs": "^3.1.6",
+    "express": "^4.17.3",
+    "socket.io": "^4.4.1"
   }
+}
