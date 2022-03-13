@@ -1,11 +1,13 @@
 html, body {
    height: 100%;
+   
  }
  
  * {
    margin: 0;
    padding: 0;
    box-sizing: border-box;
+   
  }
  
  #chat {
@@ -14,6 +16,7 @@ html, body {
    justify-content: center;
    align-items: center;
    flex-direction: column;
+   
  }
  
  input {
@@ -22,6 +25,7 @@ html, body {
    height: 50px;
    padding: 0 20px;
    font-size: 14px;
+   
  }
  
  button {
@@ -42,4 +46,5 @@ html, body {
    margin: 20px 0;
    border: 1px solid #ddd;
    padding: 20px;
+   overflow: auto;
  }
