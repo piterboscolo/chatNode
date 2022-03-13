@@ -21,7 +21,7 @@ html, body {
  
  input {
    width: 400px;
-   border: 1px solid #ddd;
+   border: 1px solid rgb(116, 108, 114);
    height: 50px;
    padding: 0 20px;
    font-size: 14px;
@@ -31,12 +31,12 @@ html, body {
  button {
    width: 400px;
    height: 50px;
-   font-size: 14px;
-   background: #069;
+   font-size: 16px;
+   background: rgb(4, 108, 160);
    text-align: center;
-   line-height: 50px;
+   line-height: 0px;
    font-weight: bold;
-   color: #FFF;
+   color: rgb(255, 255, 255);
    margin-top: 10px;
  }
  
@@ -44,7 +44,7 @@ html, body {
    width: 400px;
    height: 200px;
    margin: 20px 0;
-   border: 1px solid #ddd;
+   border: 1px solid rgb(116, 108, 114);
    padding: 20px;
    overflow: auto;
  }
