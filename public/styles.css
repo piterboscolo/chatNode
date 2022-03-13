@@ -2,6 +2,10 @@ html, body {
    height: 100%;
    
  }
+
+ .menu {
+   width: 100%;
+ }
  
  * {
    margin: 0;
