@@ -1,5 +1,6 @@
 # chat-node-heroku
 
+![chatnode](https://user-images.githubusercontent.com/88910148/158397928-e88dcacc-c0c4-4da1-9da0-ae686547f138.JPG)
 
 Web chat utilizando Node.js. Com Node.js podemos usar JavaScript no lado servidor. A aplicação utiliza WebSockets (recurso do HTML5) com a biblioteca http://socket.io para implementar o chat.
 
