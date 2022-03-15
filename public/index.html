@@ -4,13 +4,20 @@
    <meta charset="UTF-8">
    <meta http-equiv="X-UA-Compatible" content="IE=edge">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>Chat</title>
-
+   <title>Chat ON</title>
    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.js" integrity="sha512-MgkNs0gNdrnOM7k+0L+wgiRc5aLgl74sJQKbIWegVIMvVGPc1+gc1L2oK9Wf/D9pq58eqIJAxOonYPVE5UwUFA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
+   <p>
+       <center>
+                <br>
+                <br>
+                <br>
+        <h3>Gmail: piterboscolo@gmail.com</h3><br>
+        <h4>GitHub: https://github.com/piterboscolo</h4><br>
+        <h4>Linkedin: https://www.linkedin.com/in/piterson-boscolo-b640b9139/</h4>
+        </center>
+    </p>
    <link rel="stylesheet" href="styles.css">
-
 </head>
 <body>
    <form id="chat">
@@ -18,31 +25,24 @@
       <div class="messages"></div>  
       <input type="text" name="message" placeholder="Digite sua Mensagem" >
       <button type="submit">Enviar</button>
-     
    </form>
-
    <script type="text/javascript">
       var socket = io();
-
 function apagarCampos() {   
     let message = document.querySelector('input[name=message]')
     message.value = ''
 }
 function renderMessage(message) {
-    $('.messages').append('<div class="message"><strong>' + message.author + '</strong>: ' + message.message + '</div>')
-     
+    $('.messages').append('<div class="message"><strong>' + message.author + '</strong>: ' + message.message + '</div>')    
    }
-
 //socket.on('previousMessages', function (messages) {
  //   for (message of messages) {
  //       renderMessage(message);
  //   }
 ///});
-
 socket.on('receivedMessage', function (message) {
     renderMessage(message);
 });
-
 $('#chat').submit(function (event) {
     event.preventDefault();
 
