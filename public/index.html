@@ -51,7 +51,7 @@ $('#chat').submit(function (event) {
     var hora = data.getHours();
     var minuto = data.getMinutes();
     var author = $('input[name=username]').val();
-    var message = $('input[name=message]').val() + '  ' + dia + '/' + mes + '  ' + hora + ':' + minuto + 'h';
+    var message = $('input[name=message]').val() + ' - ' + dia + '/' + mes + ' - ' + hora + ':' + minuto + 'h';
     
 
     if (author.length && message.length) {
