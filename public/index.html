@@ -45,9 +45,14 @@ socket.on('receivedMessage', function (message) {
 });
 $('#chat').submit(function (event) {
     event.preventDefault();
-
+    var data = new Date();
+    var dia = data.getDate();
+    var mes = data.getMonth();
+    var hora = data.getHours();
+    var minuto = data.getMinutes();
     var author = $('input[name=username]').val();
-    var message = $('input[name=message]').val();
+    var message = $('input[name=message]').val() + '  ' + dia + '/' + mes + '  ' + hora + ':' + minuto + 'h';
+    
 
     if (author.length && message.length) {
         var messageObject = {
