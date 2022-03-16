@@ -1,4 +1,5 @@
 const express = require('express');
+const { get } = require('express/lib/response');
 const path = require('path');
 
 const app = express();
@@ -17,6 +18,7 @@ app.use('/', (req, res) => {
 });
 
 let messages = [];
+
 
 io.on('connection', socket => {
    console.log(`Socket conectado: ${socket.id}`);
