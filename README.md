@@ -25,6 +25,7 @@ Os comandos acima são para Linux e macOS. Se você usa Windows, pode baixar man
 Os pacotes (dependências) que são utilizados pela aplicação servidora são salvos na pasta node_modules. Esta pasta não é incluída e pode ser removida a qualquer momento (uma vez que podemos usar um comando para baixar os pacotes novamente). Assim, para baixar tais pacotes em tal pasta, basta executar make install.
 
 3. Executando a Aplicação
+
 3.1. Servidor
 Para iniciar o servidor, podemos executar:
 
