@@ -1,4 +1,4 @@
-# chat-node-heroku
+# chat-node
 
 ![chatnode](https://user-images.githubusercontent.com/88910148/158397928-e88dcacc-c0c4-4da1-9da0-ae686547f138.JPG)
 
@@ -51,4 +51,4 @@ O Heroku é um serviço por se integrar com o GitHub. Ele detecta quando enviamo
 
 Como esta aplicação é desenvolvida utilizando Node.js, o Heroku identifica isso pela existência do arquivo package.json e assim criar todo um ambiente de execução de aplicações.
 
-A aplicação está hospedada em https://chat-node-heroku.herokuapp.com/
+A aplicação está hospedada em
