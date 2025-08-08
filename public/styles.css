@@ -115,19 +115,30 @@ html, body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   touch-action: manipulation;
+  overflow-x: hidden;
+  width: 100%;
+  position: relative;
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: contain;
 }
 
 .chat-container {
   display: flex;
   flex-direction: column;
-  width: 320px;
-  height: 500px;
-  margin: 20px auto;
+  width: 100%;
+  max-width: 320px;
+  height: 100%;
+  min-height: 100vh;
+  max-height: 100vh;
+  margin: 0 auto;
   background-color: var(--whatsapp-panel-bg);
   position: relative;
   overflow: hidden;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-radius: 0;
+  box-shadow: none;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* Chat Header */
@@ -358,10 +369,25 @@ html, body {
 /* Responsive Adjustments */
 @media (max-width: 400px) {
   .chat-container {
-    width: 100%;
-    height: 100%;
+    max-width: 100%;
+    height: 100vh;
+    min-height: -webkit-fill-available;
     margin: 0;
     border-radius: 0;
+    box-shadow: none;
+  }
+  
+  /* Prevent iOS zoom on input focus */
+  input, textarea, select {
+    font-size: 16px !important;
+  }
+  
+  /* Prevent iOS bounce effect */
+  body {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
   }
   
   .message-content {
@@ -433,6 +459,8 @@ html, body {
   .chat-container {
     margin: 20px auto;
     border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    height: 500px;
   }
 }
 
