@@ -121,7 +121,7 @@ html, body {
   display: flex;
   flex-direction: column;
   width: 320px;
-  height: 600px;
+  height: 500px;
   margin: 20px auto;
   background-color: var(--whatsapp-panel-bg);
   position: relative;
