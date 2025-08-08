@@ -1,75 +1,135 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
-   <meta charset="UTF-8">
-   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>Chat ON</title>
-   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.js" integrity="sha512-MgkNs0gNdrnOM7k+0L+wgiRc5aLgl74sJQKbIWegVIMvVGPc1+gc1L2oK9Wf/D9pq58eqIJAxOonYPVE5UwUFA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-   <p>
-       <center>
-                <br>
-                <br>
-                <br>
-                <h2>Chat Bot NodeJS</h2>
-                <!-- <p><a href="piterboscolo@gmail.com">piterboscolo@gmail.com</a></p>
-                <p><a href="https://github.com/piterboscolo">https://github.com/piterboscolo</a></p>
-                <p><a href="https://www.linkedin.com/in/piterson-boscolo-b640b9139/">https://www.linkedin.com/in/piterson-boscolo-b640b9139/</a></p>
-        </center>    -->
-    </p>
-   <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat NodeJS</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.js"></script>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-   <form id="chat">
-      <input type="text" name="username" placeholder="Digite seu Usuário">
-      <div class="messages"' ></div>  
-      <input type="text" name="message" placeholder="Digite sua Mensagem" >
-      <button type="submit">Enviar</button>
-   </form>
-   <script type="text/javascript">
-      var socket = io();
-function apagarCampos() {   
-    let message = document.querySelector('input[name=message]')
-    message.value = ''
-}
-function renderMessage(message) {
-    $('.messages').append('<div class="message"><strong>' + message.author + '</strong>: ' + message.message + '</div>')    
-   }
-//socket.on('previousMessages', function (messages) {
- //   for (message of messages) {
- //       renderMessage(message);
- //   }
-///});
-socket.on('receivedMessage', function (message) {
-    renderMessage(message);
-});
-$('#chat').submit(function (event) {
-    event.preventDefault();
-    var data = new Date();
-    var dia = data.getDate();
-    var mes = data.getMonth();
-    var hora = data.getHours();
-    var minuto = data.getMinutes();
-    var author = $('input[name=username]').val();
-    var message = $('input[name=message]').val() + ' - ' + dia + '/' + mes + ' - ' + hora + ':' + minuto + 'h';
-    
+    <div class="chat-container">
+        <div class="chat-header">
+            <div class="header-content">
+                
+                <i class="fas fa-user-circle"></i>
+                <h1>Chat NodeJS</h1>
+            </div>
+        </div>
+        
+        <div class="chat-messages" id="messages">
+            <!-- Messages will appear here -->
+        </div>
+        
+        <form id="chat" class="chat-input-area">
+            <div class="input-group">
+                <input type="text" name="username" placeholder="Seu nome" class="username-input" required>
+                <div class="message-group">
+                    <input type="text" name="message" placeholder="Digite uma mensagem" class="message-input" required>
+                    <button type="submit" class="send-button">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
 
-    if (author.length && message.length) {
-        var messageObject = {
-            author: author,
-            message: message,
-        };
+    <script>
+        const socket = io();
+        const messagesContainer = document.getElementById('messages');
+        let currentUser = '';
 
-        renderMessage(messageObject);
-        socket.emit('sendMessage', messageObject);
-    }
-    apagarCampos()
+        // Format time as HH:MM
+        function formatTime(date) {
+            return date.toLocaleTimeString('pt-BR', { 
+                hour: '2-digit', 
+                minute: '2-digit',
+                hour12: false
+            });
+        }
 
-});
+        // Format date as DD/MM
+        function formatDate(date) {
+            return date.toLocaleDateString('pt-BR', { 
+                day: '2-digit', 
+                month: '2-digit' 
+            });
+        }
 
+        // Scroll to bottom of messages
+        function scrollToBottom() {
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
 
-   </script>
-   
+        // Render a message in the chat
+        function renderMessage(message) {
+            const now = new Date();
+            const isCurrentUser = message.author === currentUser;
+            const messageElement = document.createElement('div');
+            
+            messageElement.className = `message ${isCurrentUser ? 'sent' : 'received'}`;
+            messageElement.innerHTML = `
+                <div class="message-content">
+                    ${!isCurrentUser ? `<div class="message-sender">${message.author}</div>` : ''}
+                    <div class="message-text">${message.text}</div>
+                    <div class="message-time">${formatTime(now)}</div>
+                </div>
+            `;
+            
+            messagesContainer.appendChild(messageElement);
+            scrollToBottom();
+        }
+
+        // Handle form submission
+        document.getElementById('chat').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const usernameInput = document.querySelector('input[name="username"]');
+            const messageInput = document.querySelector('input[name="message"]');
+            
+            const username = usernameInput.value.trim();
+            const messageText = messageInput.value.trim();
+            
+            if (username && messageText) {
+                // Set current user on first message
+                if (!currentUser) {
+                    currentUser = username;
+                    usernameInput.disabled = true;
+                    usernameInput.classList.add('disabled');
+                }
+                
+                const message = {
+                    author: username,
+                    text: messageText,
+                    timestamp: new Date().toISOString()
+                };
+                
+                // Emit message to server
+                socket.emit('sendMessage', message);
+                
+                // Render the sent message
+                renderMessage(message);
+                
+                // Clear and focus input
+                messageInput.value = '';
+                messageInput.focus();
+            }
+        });
+
+        // Listen for new messages from server
+        socket.on('receivedMessage', function(message) {
+            renderMessage(message);
+        });
+
+        // Focus message input on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const messageInput = document.querySelector('input[name="message"]');
+            if (messageInput) {
+                messageInput.focus();
+            }
+        });
+    </script>
 </body>
 </html>
