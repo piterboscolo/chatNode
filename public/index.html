@@ -55,9 +55,11 @@
         const usernameInput = document.getElementById('username-input');
         const enterChatBtn = document.getElementById('enter-chat');
         let currentUser = '';
+        let currentUserId = '';
 
         // Format time as HH:MM
-        function formatTime(date) {
+        function formatTime(dateString) {
+            const date = new Date(dateString);
             return date.toLocaleTimeString('pt-BR', { 
                 hour: '2-digit', 
                 minute: '2-digit',
@@ -74,6 +76,9 @@
                 usernameScreen.style.display = 'none';
                 chatContainer.style.display = 'flex';
                 document.querySelector('.message-input').focus();
+                
+                // Notify server that user joined
+                socket.emit('userJoined', username);
             }
         }
 
@@ -101,18 +106,27 @@
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
 
+        // Show notification message
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.textContent = message;
+            messagesContainer.appendChild(notification);
+            scrollToBottom();
+        }
+
         // Render a message in the chat
         function renderMessage(message) {
-            const now = new Date();
-            const isCurrentUser = message.author === currentUser;
+            const messageTime = message.timestamp || new Date().toISOString();
+            const isCurrentUser = message.authorId === socket.id;
             const messageElement = document.createElement('div');
             
             messageElement.className = `message ${isCurrentUser ? 'sent' : 'received'}`;
             messageElement.innerHTML = `
                 <div class="message-content">
-                    <div class="message-sender">${message.author}</div>
+                    ${!isCurrentUser ? `<div class="message-sender">${message.author}</div>` : ''}
                     <div class="message-text">${message.text}</div>
-                    <div class="message-time">${formatTime(now)}</div>
+                    <div class="message-time">${formatTime(messageTime)}</div>
                 </div>
             `;
             
@@ -128,17 +142,8 @@
             const messageText = messageInput.value.trim();
             
             if (messageText) {
-                const message = {
-                    author: currentUser,
-                    text: messageText,
-                    timestamp: new Date().toISOString()
-                };
-                
                 // Emit message to server
-                socket.emit('sendMessage', message);
-                
-                // Render the sent message
-                renderMessage(message);
+                socket.emit('sendMessage', { text: messageText });
                 
                 // Clear and focus input
                 messageInput.value = '';
@@ -146,11 +151,68 @@
             }
         });
 
+        // Handle typing indicator
+        const messageInput = document.querySelector('input[name="message"]');
+        let typingTimer;
+        
+        messageInput.addEventListener('input', function() {
+            socket.emit('typing');
+            
+            // Clear previous timer
+            clearTimeout(typingTimer);
+            
+            // Set a new timer
+            typingTimer = setTimeout(() => {
+                // Typing stopped
+            }, 2000);
+        });
+
+        // Socket event listeners
+        socket.on('connect', () => {
+            console.log('Connected to server');
+        });
+
         // Listen for new messages from server
-        socket.on('receivedMessage', function(message) {
-            if (message.author !== currentUser) {
-                renderMessage(message);
+        socket.on('newMessage', function(message) {
+            renderMessage(message);
+        });
+
+        // Listen for previous messages when joining
+        socket.on('previousMessages', function(messages) {
+            // Clear existing messages first
+            messagesContainer.innerHTML = '';
+            messages.forEach(renderMessage);
+        });
+
+        // Listen for user connection events
+        socket.on('userConnected', function(data) {
+            if (data.userId !== socket.id) {  // Don't show notification for self
+                showNotification(`${data.username} entrou no chat`);
             }
+        });
+
+        // Listen for user disconnection events
+        socket.on('userDisconnected', function(data) {
+            showNotification(`${data.username} saiu do chat`);
+        });
+
+        // Listen for typing indicators
+        socket.on('userTyping', function(data) {
+            if (data.userId !== socket.id) {  // Don't show own typing indicator
+                // You can implement a typing indicator UI here if desired
+                console.log(`${data.username} está digitando...`);
+            }
+        });
+
+        // Handle errors
+        socket.on('error', function(error) {
+            console.error('Erro:', error);
+            showNotification(`Erro: ${error}`);
+        });
+
+        // Handle window close
+        window.addEventListener('beforeunload', function() {
+            socket.emit('disconnect');
         });
     </script>
 </body>
