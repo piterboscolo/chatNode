@@ -10,12 +10,26 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="chat-container">
+    <!-- Username Entry Screen -->
+    <div id="username-screen" class="username-screen">
+        <div class="username-container">
+            <div class="logo">
+                <i class="fas fa-comments"></i>
+                <h1>Chat NodeJS</h1>
+            </div>
+            <div class="form-group">
+                <input type="text" id="username-input" placeholder="Digite seu nome" required>
+                <button id="enter-chat" class="btn-primary">Entrar no Chat</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chat Container (initially hidden) -->
+    <div id="chat-container" class="chat-container" style="display: none;">
         <div class="chat-header">
             <div class="header-content">
-                
                 <i class="fas fa-user-circle"></i>
-                <h1>Chat NodeJS</h1>
+                <h1 id="chat-username">Chat NodeJS</h1>
             </div>
         </div>
         
@@ -24,14 +38,11 @@
         </div>
         
         <form id="chat" class="chat-input-area">
-            <div class="input-group">
-                <input type="text" name="username" placeholder="Seu nome" class="username-input" required>
-                <div class="message-group">
-                    <input type="text" name="message" placeholder="Digite uma mensagem" class="message-input" required>
-                    <button type="submit" class="send-button">
-                        <i class="fas fa-paper-plane"></i>
-                    </button>
-                </div>
+            <div class="message-group">
+                <input type="text" name="message" placeholder="Digite uma mensagem" class="message-input" required>
+                <button type="submit" class="send-button">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
             </div>
         </form>
     </div>
@@ -39,6 +50,10 @@
     <script>
         const socket = io();
         const messagesContainer = document.getElementById('messages');
+        const usernameScreen = document.getElementById('username-screen');
+        const chatContainer = document.getElementById('chat-container');
+        const usernameInput = document.getElementById('username-input');
+        const enterChatBtn = document.getElementById('enter-chat');
         let currentUser = '';
 
         // Format time as HH:MM
@@ -50,13 +65,36 @@
             });
         }
 
-        // Format date as DD/MM
-        function formatDate(date) {
-            return date.toLocaleDateString('pt-BR', { 
-                day: '2-digit', 
-                month: '2-digit' 
-            });
+        // Show chat and hide username screen
+        function showChat() {
+            const username = usernameInput.value.trim();
+            if (username) {
+                currentUser = username;
+                document.getElementById('chat-username').textContent = username;
+                usernameScreen.style.display = 'none';
+                chatContainer.style.display = 'flex';
+                document.querySelector('.message-input').focus();
+            }
         }
+
+        // Handle enter key in username input
+        usernameInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                showChat();
+            }
+        });
+
+        // Handle enter chat button click
+        enterChatBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            showChat();
+        });
+
+        // Focus username input on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            usernameInput.focus();
+        });
 
         // Scroll to bottom of messages
         function scrollToBottom() {
@@ -72,7 +110,7 @@
             messageElement.className = `message ${isCurrentUser ? 'sent' : 'received'}`;
             messageElement.innerHTML = `
                 <div class="message-content">
-                    ${!isCurrentUser ? `<div class="message-sender">${message.author}</div>` : ''}
+                    <div class="message-sender">${message.author}</div>
                     <div class="message-text">${message.text}</div>
                     <div class="message-time">${formatTime(now)}</div>
                 </div>
@@ -82,26 +120,16 @@
             scrollToBottom();
         }
 
-        // Handle form submission
+        // Handle chat form submission
         document.getElementById('chat').addEventListener('submit', function(e) {
             e.preventDefault();
             
-            const usernameInput = document.querySelector('input[name="username"]');
             const messageInput = document.querySelector('input[name="message"]');
-            
-            const username = usernameInput.value.trim();
             const messageText = messageInput.value.trim();
             
-            if (username && messageText) {
-                // Set current user on first message
-                if (!currentUser) {
-                    currentUser = username;
-                    usernameInput.disabled = true;
-                    usernameInput.classList.add('disabled');
-                }
-                
+            if (messageText) {
                 const message = {
-                    author: username,
+                    author: currentUser,
                     text: messageText,
                     timestamp: new Date().toISOString()
                 };
@@ -120,14 +148,8 @@
 
         // Listen for new messages from server
         socket.on('receivedMessage', function(message) {
-            renderMessage(message);
-        });
-
-        // Focus message input on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            const messageInput = document.querySelector('input[name="message"]');
-            if (messageInput) {
-                messageInput.focus();
+            if (message.author !== currentUser) {
+                renderMessage(message);
             }
         });
     </script>
